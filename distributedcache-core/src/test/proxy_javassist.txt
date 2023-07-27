@@ -1,0 +1,29 @@
+
+public static java.lang.reflect.Method[] methods;
+private " + InvocationHandler.class.getName() + " handler;
+
+public java.lang.Object $echo(java.lang.Object arg0){
+	Object[] args = new Object[1]; 
+	args[0] = ($w)$1;
+	Object ret = handler.invoke(this, methods[0], args);
+	return (java.lang.Object)ret;
+}
+
+
+public java.lang.String sayHello(java.lang.String arg0){
+	Object[] args = new Object[1]; 
+	args[0] = ($w)$1; 
+	Object ret = handler.invoke(this, methods[1], args); 
+	return (java.lang.String)ret;
+}
+
+public java.util.concurrent.CompletableFuture sayHelloAsync(java.lang.String arg0){
+	Object[] args = new Object[1]; 
+	args[0] = ($w)$1; 
+	Object ret = handler.invoke(this, methods[2], args); 
+	return (java.util.concurrent.CompletableFuture)ret;
+}
+public void $destroy(){
+	Object[] args = new Object[0];
+	Object ret = handler.invoke(this, methods[3], args);
+}
