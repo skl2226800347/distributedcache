@@ -11,6 +11,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.util.Pool;
 
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 public class RedisCache<K,V> extends AbstractExternalCache<K,V> {
@@ -47,11 +48,11 @@ public class RedisCache<K,V> extends AbstractExternalCache<K,V> {
     }
 
     @Override
-    protected CacheResult doPut(K key, V value) {
+    protected CacheResult doPut(K key, V value, long expireAfterWrite, TimeUnit timeUnit) {
         try(Jedis jedis = getJedisPool().getResource()) {
-            CacheValueHolder holder = CacheValueHolder.createCacheValueHolder(value);
+            CacheValueHolder holder = new CacheValueHolder(value,expireAfterWrite);
             jedis.set(buildKey(getCacheConfig().getKeyPrefix(), key), valueEncoder.apply(holder));
-            return CacheResult.createSuccess();
+            return CacheResult.SUCCESS_WITHOUT_MSG;
         }catch (Throwable e){
             logger.error("doPut e:{}",e);
             return new CacheGetResult(e);
@@ -62,7 +63,7 @@ public class RedisCache<K,V> extends AbstractExternalCache<K,V> {
     protected CacheResult doRemove(K key) {
         try(Jedis jedis = getJedisPool().getResource()) {
             jedis.del(buildKey(getCacheConfig().getKeyPrefix(), key));
-            return CacheResult.createSuccess();
+            return CacheResult.SUCCESS_WITHOUT_MSG;
         }
     }
 

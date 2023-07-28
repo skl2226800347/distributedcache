@@ -6,11 +6,12 @@ import com.skl.distributedcache.core.config.CacheConfig;
 import com.skl.distributedcache.core.result.CacheGetResult;
 import com.skl.distributedcache.core.result.CacheResult;
 
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 public abstract class AbstractLocalCache<K,V> extends AbstractCache<K,V> {
     protected InnerMap innerMap;
-    private LocalCacheConfig cacheConfig;
+    protected LocalCacheConfig cacheConfig;
 
 
     public AbstractLocalCache(LocalCacheConfig cacheConfig){
@@ -42,16 +43,16 @@ public abstract class AbstractLocalCache<K,V> extends AbstractCache<K,V> {
     }
 
     @Override
-    protected CacheResult doPut(K key, V value) {
-        CacheValueHolder holder = CacheValueHolder.createCacheValueHolder(value);
+    protected CacheResult doPut(K key, V value, long expireAfterWrite, TimeUnit timeUnit) {
+        CacheValueHolder holder = new CacheValueHolder(value,timeUnit.toMillis(expireAfterWrite));
         innerMap.putObject(buildKey(key),holder);
-        return CacheResult.createSuccess();
+        return CacheResult.SUCCESS_WITHOUT_MSG;
     }
 
     @Override
     protected CacheResult doRemove(K key) {
         innerMap.removeObject(buildKey(key));
-        return CacheResult.createSuccess();
+        return CacheResult.SUCCESS_WITHOUT_MSG;
     }
 
     @Override

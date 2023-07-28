@@ -45,4 +45,9 @@ public abstract class AbstractCacheBuilder<T extends AbstractCacheBuilder<T>> im
         getCacheConfig().setExpireAfterWriteInMillis(timeUnit.toMillis(expireAfterWriteInMillis));
         return self();
     }
+
+    public T expireAfterAccessInMillis(long expireAfterAccessInMillis){
+        getCacheConfig().setExpireAfterAccessInMillis(expireAfterAccessInMillis);
+        return self();
+    }
 }

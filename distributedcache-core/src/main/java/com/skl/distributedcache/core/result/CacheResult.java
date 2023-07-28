@@ -1,48 +1,29 @@
 package com.skl.distributedcache.core.result;
-
 import com.skl.distributedcache.core.enums.CacheResultCode;
 
 public class CacheResult {
-    public static final CacheResult UPDATE_CACHE_FAIL = new CacheResult( CacheResultCode.UPDATE_CACHE_FAIL);
-    public static final CacheResult KEY_IS_NULL = new CacheResult( CacheResultCode.KEY_IS_NULL);
-    public static final CacheResult SUCCESS = new CacheResult( CacheResultCode.SUCCESS);
-    private boolean success = false;
-    private String code;
+    public static final String ERROR_PARAM="error param";
+    public static final CacheResult FAIL_ERROR_PARAM=new CacheResult(CacheResultCode.FAIL,ERROR_PARAM);
+    public static final CacheResult FAIL_WITHOUT_MSG = new CacheResult( CacheResultCode.FAIL, null);
+    public static final CacheResult SUCCESS_WITHOUT_MSG = new CacheResult(CacheResultCode.SUCCESS,null);
+    private CacheResultCode resultCode;
     private String msg;
 
-    public CacheResult(CacheResultCode cacheResultCode) {
-        if (CacheResultCode.SUCCESS.equals(cacheResultCode)){
-            this.success = true;
-            this.code = cacheResultCode.getCode();
-        } else {
-            this.success = false;
-            this.code = cacheResultCode.getCode();
-            this.msg = cacheResultCode.getMsg();
-        }
+    public CacheResult(CacheResultCode resultCode,String msg) {
+        this.resultCode= resultCode;
+        this.msg = msg;
     }
 
     public CacheResult(Throwable e){
 
     }
 
-    public static final CacheResult createSuccess(){
-        CacheResult result = new CacheResult(CacheResultCode.SUCCESS);
-        return result;
-    }
-    public boolean isSuccess() {
-        return success;
+    public CacheResultCode getResultCode() {
+        return resultCode;
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
+    public void setResultCode(CacheResultCode resultCode) {
+        this.resultCode = resultCode;
     }
 
     public String getMsg() {
@@ -51,5 +32,10 @@ public class CacheResult {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+
+    public boolean isSuccess(){
+        return getResultCode() ==CacheResultCode.SUCCESS;
     }
 }

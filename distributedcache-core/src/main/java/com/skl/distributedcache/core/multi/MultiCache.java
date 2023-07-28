@@ -5,6 +5,8 @@ import com.skl.distributedcache.core.Cache;
 import com.skl.distributedcache.core.result.CacheGetResult;
 import com.skl.distributedcache.core.result.CacheResult;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * multi cache class
  * @author skl
@@ -31,14 +33,19 @@ public class MultiCache<K,V> extends AbstractCache<K,V> {
     }
 
     @Override
-    protected CacheResult doPut(K key, V value) {
+    protected CacheResult doPut(K key, V value, long expire, TimeUnit timeUnit) {
         for(Cache cache : caches) {
-            CacheResult result = cache.PUT(key,value);
+            CacheResult result;
+            if(timeUnit == null) {
+                result = cache.PUT(key, value);
+            }else{
+                result = cache.PUT(key,value,expire,timeUnit);
+            }
             if(!result.isSuccess()){
                 return result;
             }
         }
-        return CacheResult.SUCCESS;
+        return CacheResult.SUCCESS_WITHOUT_MSG;
     }
 
     @Override
@@ -49,7 +56,7 @@ public class MultiCache<K,V> extends AbstractCache<K,V> {
                 return result;
             }
         }
-        return CacheResult.SUCCESS;
+        return CacheResult.SUCCESS_WITHOUT_MSG;
     }
 
     @Override

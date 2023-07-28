@@ -7,7 +7,7 @@ public interface CacheConstants {
 
     long UNDEFINED_LONG = Long.MIN_VALUE;
     long UNDEFINED_INT = Integer.MIN_VALUE;
-
+    int DEFAULT_LOCAL_LIMIT = 200;
     String DEFAULT_SERIAL_POLICY = SerialPolicy.JAVA;
 
 

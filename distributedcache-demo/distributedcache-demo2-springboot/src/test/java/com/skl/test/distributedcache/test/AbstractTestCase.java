@@ -1,6 +1,6 @@
 package com.skl.test.distributedcache.test;
 
-import com.skl.distributedcache.test.Application;
+import com.skl.distributedcache.test.Demo2Application;
 import org.junit.runner.RunWith;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,7 +9,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = Application.class)
+@SpringBootTest(classes = Demo2Application.class)
 @SpringBootConfiguration
 @Rollback(false)
 public class AbstractTestCase {

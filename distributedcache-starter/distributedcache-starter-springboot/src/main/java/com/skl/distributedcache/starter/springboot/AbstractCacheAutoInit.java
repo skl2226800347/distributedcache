@@ -69,6 +69,10 @@ public abstract class AbstractCacheAutoInit implements InitializingBean {
         if(expireAfterWriteInMillis != null){
             acb.expireAfterWriteInMillis(Long.valueOf(expireAfterWriteInMillis));
         }
+        String expireAfterAccessInMillis= configTree.getProperty("expireAfterAccessInMillis");
+        if(expireAfterAccessInMillis != null){
+            acb.expireAfterAccessInMillis(Long.parseLong(expireAfterAccessInMillis));
+        }
     }
 
     protected abstract CacheBuilder initCacheBuilder(ConfigTree configTree,String cacheAreaWithPrefix);

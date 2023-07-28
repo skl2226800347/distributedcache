@@ -12,7 +12,12 @@ public abstract class AbstractCache<K,V> implements Cache<K,V>{
 
     @Override
     public V get(K key) {
-        return null;
+        CacheGetResult<V> cacheGetResult = GET(key);
+        if(cacheGetResult != null){
+            return cacheGetResult.getValue();
+        }else{
+            return null;
+        }
     }
 
     @Override
@@ -40,7 +45,11 @@ public abstract class AbstractCache<K,V> implements Cache<K,V>{
             return result.getValue();
         }
         Consumer updateConsumer = (newValue)->{
-            PUT(key,(V)newValue);
+            if(timeUnit != null){
+                cache.PUT(key, (V) newValue, expireAfterWrite, timeUnit);
+            }else {
+                cache.PUT(key,newValue);
+            }
         };
         V newValue = newLoader.apply(key);
         updateConsumer.accept(newValue);
@@ -48,25 +57,27 @@ public abstract class AbstractCache<K,V> implements Cache<K,V>{
     }
 
     protected abstract CacheGetResult<V> doGET(K key);
-    protected abstract CacheResult  doPut(K key,V value);
+    protected abstract CacheResult  doPut(K key,V value,long expireAfter,TimeUnit timeUnit);
 
     @Override
     public CacheGetResult<V> GET(K key) {
         CacheGetResult result = doGET(key);
-
          return result;
     }
 
     @Override
-    public CacheResult PUT(K key, V value) {
-        CacheResult result = doPut(key,value);
+    public CacheResult PUT(K key, V value,long expireAfterWrite,TimeUnit timeUnit) {
+        if(key == null){
+            return CacheResult.FAIL_WITHOUT_MSG;
+        }
+        CacheResult result = doPut(key,value,expireAfterWrite,timeUnit);
         return result;
     }
 
     @Override
     public CacheResult REMOVE(K key) {
         if(key == null){
-            return CacheResult.KEY_IS_NULL;
+            return CacheResult.FAIL_ERROR_PARAM;
         }
         return doRemove(key);
     }

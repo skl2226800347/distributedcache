@@ -3,8 +3,6 @@ package com.skl.distributedcache.core.result;
 import com.skl.distributedcache.core.CacheValueHolder;
 import com.skl.distributedcache.core.enums.CacheResultCode;
 
-import javax.xml.ws.Holder;
-
 public class CacheGetResult<V> extends CacheResult {
     public static final CacheGetResult NOT_EXIST = new CacheGetResult( CacheResultCode.NOT_EXIST);
 
@@ -12,7 +10,7 @@ public class CacheGetResult<V> extends CacheResult {
         super(e);
     }
     public CacheGetResult(CacheResultCode cacheResultCode){
-        super(cacheResultCode);
+        super(cacheResultCode,null);
     }
 
     public static final CacheGetResult createSuccess(CacheValueHolder holder){

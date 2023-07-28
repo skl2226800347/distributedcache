@@ -20,6 +20,8 @@
         <zookeeper.version>3.4.13</zookeeper.version>
         <curator.version>4.0.1</curator.version>
         <redis.version>2.9.3</redis.version>
+        <caffeine.version>2.7.0</caffeine.version>
+        <guava.version>24.0-jre</guava.version>
     </properties>
 
     <modules>
@@ -132,6 +134,17 @@
                 <groupId>redis.clients</groupId>
                 <artifactId>jedis</artifactId>
                 <version>${redis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>${caffeine.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

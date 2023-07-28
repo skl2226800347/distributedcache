@@ -14,8 +14,11 @@ import org.springframework.context.annotation.Import;
 @ConditionalOnClass(DistributedcaceAutoConfiguration.class)
 @ConditionalOnMissingBean(DistributedcaceAutoConfiguration.class)
 @EnableConfigurationProperties(DistributecacheProperties.class)
-@Import({RedisAutoConfiguration.class,
+@Import({
         LinkedHashMapAutoConfiguration.class,
+        CaffeineAutoConfiguration.class,
+        GuavaAutoConfiguration.class,
+        RedisAutoConfiguration.class,
         CuratorZookeeperAutoConfiguration.class})
 public class DistributedcaceAutoConfiguration {
     public static final String GLOBAL_CACHE_CONFIG_NAME="globalCacheConfig";

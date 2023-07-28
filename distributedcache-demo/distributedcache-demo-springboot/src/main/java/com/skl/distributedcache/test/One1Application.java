@@ -8,10 +8,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @EnableMethodCache(basePackages = "com.skl.distributedcache")
-public class Application {
-    private static final Logger logger = LoggerFactory.getLogger(Application.class);
+public class One1Application {
+    private static final Logger logger = LoggerFactory.getLogger(One1Application.class);
     public static final void main(String[]args) throws Exception{
-        SpringApplication.run(Application.class);
+        SpringApplication.run(One1Application.class);
         logger.info("启动成功");
     }
 }
