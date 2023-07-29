@@ -9,9 +9,9 @@ public class CacheValueHolder<V> implements Serializable {
     private static final long serialVersionUID = -5596199778888920791L;
     private V value;
 
-    public CacheValueHolder(){
+    /*public CacheValueHolder(){
 
-    }
+    }*/
     public CacheValueHolder(V value,long expireAfterWrite){
         this.value =value;
         this.accessTime = System.currentTimeMillis();

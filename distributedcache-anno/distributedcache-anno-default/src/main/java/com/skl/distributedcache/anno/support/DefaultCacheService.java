@@ -11,6 +11,7 @@ import com.skl.distributedcache.core.multi.MultiCacheBuilder;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class DefaultCacheService {
     static DefaultCacheService DEFAULT_CACHE_SERVICE;
@@ -65,7 +66,7 @@ public class DefaultCacheService {
         }
     }
 
-    private Cache createCacheByCacheConfig( CacheAnnoConfig cacheAnnoConfig){
+    private Cache createCacheByCacheConfig(CacheAnnoConfig cacheAnnoConfig){
         String area = cacheAnnoConfig.getArea();
         String cacheName = cacheAnnoConfig.getName();
         Cache cache;
@@ -96,9 +97,12 @@ public class DefaultCacheService {
         Cache localCache = buildLocal(cacheAnnoConfig);
         Cache remoteCache = buildExternal(cacheAnnoConfig);
         MultiCacheBuilder multiCacheBuilder = MultiCacheBuilder.createMultiCacheBuider();
-        Cache cache = multiCacheBuilder.addCaches(localCache,remoteCache).buildCache();
+        Cache cache = multiCacheBuilder.addCaches(localCache,remoteCache)
+                .expireAfterWriteInMillis(remoteCache.getCacheConfig().getExpireAfterWriteInMillis(),TimeUnit.MILLISECONDS)
+                .buildCache();
         return cache;
     }
+
 
 
 }

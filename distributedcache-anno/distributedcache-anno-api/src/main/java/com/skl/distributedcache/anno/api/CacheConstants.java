@@ -5,6 +5,7 @@ public interface CacheConstants {
     String DEFAULT_NAME="default";
     String UNDEFINED_STRING="$$undefined$$";
 
+    int DEFAULT_EXPIRE = Integer.MAX_VALUE;
     long UNDEFINED_LONG = Long.MIN_VALUE;
     long UNDEFINED_INT = Integer.MIN_VALUE;
     int DEFAULT_LOCAL_LIMIT = 200;

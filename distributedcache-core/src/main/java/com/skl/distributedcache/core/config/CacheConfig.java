@@ -1,5 +1,7 @@
 package com.skl.distributedcache.core.config;
 
+import com.skl.distributedcache.anno.api.CacheConstants;
+
 import java.io.Serializable;
 import java.util.function.Function;
 
@@ -7,7 +9,7 @@ public class CacheConfig<K,V> implements Serializable,Cloneable {
 
     private Function<K,Object> keyConvertor;
 
-    private long expireAfterWriteInMillis;
+    private long expireAfterWriteInMillis = CacheConstants.DEFAULT_EXPIRE * 1000;
     private long expireAfterAccessInMillis = 0;
 
     boolean cacheNullValue = false;

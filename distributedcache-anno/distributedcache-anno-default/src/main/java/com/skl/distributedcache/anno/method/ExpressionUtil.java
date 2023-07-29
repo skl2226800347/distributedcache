@@ -10,7 +10,7 @@ public class ExpressionUtil {
         try {
             if (cacheAnnoConfig.getKeyEvaluator() == null) {
                 ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator(cacheAnnoConfig.getKey(), cacheAnnoConfig.getDefineMethod());
-                cacheAnnoConfig.setKeyEvaluator((o) -> expressionEvaluator.apply(cacheInvokeContext));
+                cacheAnnoConfig.setKeyEvaluator((o) -> expressionEvaluator.apply(o));
             }
             return cacheAnnoConfig.getKeyEvaluator().apply(cacheInvokeContext);
         }catch (Exception e){
@@ -22,7 +22,7 @@ public class ExpressionUtil {
         try {
             if (cacheUpdateAnnoConfig.getValueEvaluator() == null) {
                 ExpressionEvaluator expressionEvaluator = new ExpressionEvaluator(cacheUpdateAnnoConfig.getValue(), cacheUpdateAnnoConfig.getDefineMethod());
-                cacheUpdateAnnoConfig.setValueEvaluator((o) -> expressionEvaluator.apply(cacheInvokeContext));
+                cacheUpdateAnnoConfig.setValueEvaluator((o) -> expressionEvaluator.apply(o));
             }
             return cacheUpdateAnnoConfig.getValueEvaluator().apply(cacheInvokeContext);
         }catch (Exception e){

@@ -59,6 +59,9 @@ public abstract class ZookeeperRemotingAutoInit extends AbstractRemotingAutoInit
         ZookeeperConfig zookeeperConfig =(ZookeeperConfig)zookeeperClientBuider.getConfig();
         Client client = clientBuilder.builderClient();
         if(CollectionUtil.isNotEmpty(zookeeperConfig.getSubscribePathList())) {
+            if(!cacheConfigMap.isContainLocaclCache()){
+                return;
+            }
             DefaultCacheService defaultCacheService = DefaultCacheService.getDefaultCacheService(cacheConfigMap,autoConfigureBeans.getLocalCacheBuilders(),autoConfigureBeans.getExternalCacheBuilders());
             if(defaultCacheService == null){
                 return ;
@@ -70,7 +73,6 @@ public abstract class ZookeeperRemotingAutoInit extends AbstractRemotingAutoInit
     }
 
     protected DataListener getDataListener(DefaultCacheService defaultCacheService){
-
         DataListener dataListener = new DataListener() {
             @Override
             public void dataEvent(DataEvent dataEvent) {
@@ -112,6 +114,4 @@ public abstract class ZookeeperRemotingAutoInit extends AbstractRemotingAutoInit
         };
         return dataListener;
     }
-
-
 }

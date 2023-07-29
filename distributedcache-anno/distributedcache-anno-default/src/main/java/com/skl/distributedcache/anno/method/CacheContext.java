@@ -12,6 +12,8 @@ import com.skl.distributedcache.core.external.AbstractExternalCacheBuilder;
 import com.skl.distributedcache.core.multi.MultiCacheBuilder;
 import com.skl.distributedcache.core.utils.StringUtils;
 
+import java.util.concurrent.TimeUnit;
+
 public class CacheContext {
     private CacheManager cacheManager = CacheManager.getDefaultCacheManager();
     private GlobalCacheConfig globalCacheConfig;
@@ -110,6 +112,7 @@ public class CacheContext {
         Cache remoteCache = buildExternal(cachedAnnoConfig,cacheName);
         Cache cache = MultiCacheBuilder.createMultiCacheBuider()
                 .addCaches(localCache,remoteCache)
+                .expireAfterWriteInMillis(remoteCache.getCacheConfig().getExpireAfterWriteInMillis(),TimeUnit.MILLISECONDS)
                 .buildCache();
         return cache;
     }

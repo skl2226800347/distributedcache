@@ -13,9 +13,5 @@ public class MutliCacheConfig extends CacheConfig {
         return caches;
     }
 
-    public void addCache(Cache ... caches) {
-        for(Cache cache : caches){
-            this.caches.add(cache);
-        }
-    }
+
 }

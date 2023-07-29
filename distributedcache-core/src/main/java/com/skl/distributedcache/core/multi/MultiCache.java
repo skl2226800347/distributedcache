@@ -2,9 +2,11 @@ package com.skl.distributedcache.core.multi;
 
 import com.skl.distributedcache.core.AbstractCache;
 import com.skl.distributedcache.core.Cache;
+import com.skl.distributedcache.core.CacheValueHolder;
 import com.skl.distributedcache.core.result.CacheGetResult;
 import com.skl.distributedcache.core.result.CacheResult;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,13 +25,39 @@ public class MultiCache<K,V> extends AbstractCache<K,V> {
 
     @Override
     protected CacheGetResult<V> doGET(K key) {
-        for(Cache cache : caches){
+        for(int i=0;i<caches.length;i++){
+            Cache cache = caches[i];
             CacheGetResult result = cache.GET(key);
             if(result.isSuccess()){
+                CacheValueHolder<V> holder=result.getHolder();
+                checkResultAndFillUpperCache(key,i,holder);
                 return result;
             }
         }
         return CacheGetResult.NOT_EXIST;
+    }
+
+    private void checkResultAndFillUpperCache(K key,int i,CacheValueHolder<V> holder){
+        Objects.requireNonNull(holder);
+        long currentExpire = holder.getExpireTime();
+        long now = System.currentTimeMillis();
+        if(now<=currentExpire){
+            long internal =currentExpire - now;
+            if(internal>0){
+                PUT_caches(i,key,holder.getValue(),internal,TimeUnit.MILLISECONDS);
+            }
+        }
+    }
+
+    private void PUT_caches(int lastIndex,K key, V value,long expire,TimeUnit timeUnit){
+        for(int i=0;i<lastIndex;i++){
+            Cache cache = caches[i];
+            if(timeUnit == null){
+                cache.PUT(key,value);
+            }else{
+                cache.PUT(key,value,expire,timeUnit);
+            }
+        }
     }
 
     @Override

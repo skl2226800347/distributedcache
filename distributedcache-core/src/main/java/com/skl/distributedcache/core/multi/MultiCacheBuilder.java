@@ -4,8 +4,10 @@ import com.skl.distributedcache.core.AbstractCacheBuilder;
 import com.skl.distributedcache.core.Cache;
 import com.skl.distributedcache.core.config.CacheConfig;
 
+import java.util.Objects;
+
 public class MultiCacheBuilder<T extends AbstractCacheBuilder<T>> extends AbstractCacheBuilder<T> {
-    private MutliCacheConfig cacheConfig;
+
     public static class MultiCacheBuiderImpl extends MultiCacheBuilder<MultiCacheBuiderImpl>{
 
     }
@@ -17,16 +19,19 @@ public class MultiCacheBuilder<T extends AbstractCacheBuilder<T>> extends Abstra
     }
 
     @Override
-    public CacheConfig getCacheConfig() {
+    public MutliCacheConfig getCacheConfig() {
         if (cacheConfig == null){
             cacheConfig = new MutliCacheConfig();
         }
-        return cacheConfig;
+        return (MutliCacheConfig)cacheConfig;
     }
 
     public T addCaches(Cache...caches){
-        getCacheConfig();
-        this.cacheConfig.addCache(caches);
+        Objects.requireNonNull(caches);
+
+        for(Cache cache : caches){
+            getCacheConfig().getCaches().add(cache);
+        }
         return self();
     }
 
