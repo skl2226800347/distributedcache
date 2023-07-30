@@ -43,14 +43,14 @@ public abstract class AbstractLocalCache<K,V> extends AbstractCache<K,V> {
     }
 
     @Override
-    protected CacheResult doPut(K key, V value, long expireAfterWrite, TimeUnit timeUnit) {
+    protected CacheResult doPut(K key, V value, long expireAfterWrite, TimeUnit timeUnit,boolean onlyPutLocal) {
         CacheValueHolder holder = new CacheValueHolder(value,timeUnit.toMillis(expireAfterWrite));
         innerMap.putObject(buildKey(key),holder);
         return CacheResult.SUCCESS_WITHOUT_MSG;
     }
 
     @Override
-    protected CacheResult doRemove(K key) {
+    protected CacheResult doRemove(K key,boolean onlyRemoveLocal) {
         innerMap.removeObject(buildKey(key));
         return CacheResult.SUCCESS_WITHOUT_MSG;
     }

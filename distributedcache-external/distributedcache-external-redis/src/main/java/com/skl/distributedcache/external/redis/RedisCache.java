@@ -48,7 +48,7 @@ public class RedisCache<K,V> extends AbstractExternalCache<K,V> {
     }
 
     @Override
-    protected CacheResult doPut(K key, V value, long expireAfterWrite, TimeUnit timeUnit) {
+    protected CacheResult doPut(K key, V value, long expireAfterWrite, TimeUnit timeUnit,boolean onlyPutLocal) {
         try(Jedis jedis = getJedisPool().getResource()) {
             CacheValueHolder holder = new CacheValueHolder(value,expireAfterWrite);
             jedis.set(buildKey(getCacheConfig().getKeyPrefix(), key), valueEncoder.apply(holder));
@@ -60,7 +60,10 @@ public class RedisCache<K,V> extends AbstractExternalCache<K,V> {
     }
 
     @Override
-    protected CacheResult doRemove(K key) {
+    protected CacheResult doRemove(K key,boolean onlyRemoveLocal) {
+        if(onlyRemoveLocal){
+            return CacheResult.SUCCESS_WITHOUT_MSG;
+        }
         try(Jedis jedis = getJedisPool().getResource()) {
             jedis.del(buildKey(getCacheConfig().getKeyPrefix(), key));
             return CacheResult.SUCCESS_WITHOUT_MSG;

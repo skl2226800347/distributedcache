@@ -118,9 +118,9 @@ public abstract class ZookeeperRemotingAutoInit extends AbstractRemotingAutoInit
                     return;
                 }
                 if(dataEventType == DataEventType.INVLIDATE) {
-                    cache.remove(remotingParam.getKey());
+                    cache.remove(remotingParam.getKey(),true);
                 }else if(dataEventType == DataEventType.UPDATE){
-                    cache.put(remotingParam.getKey(),remotingParam.getValue());
+                    cache.put(remotingParam.getKey(),remotingParam.getValue(),true);
                 }
             }
         };

@@ -20,10 +20,6 @@ public abstract class AbstractCache<K,V> implements Cache<K,V>{
         }
     }
 
-    @Override
-    public void put(K key, V value) {
-        PUT(key,value);
-    }
 
     @Override
     public V computeIfAbsent(K key, Function<K, V> loaderFunc) {
@@ -46,9 +42,9 @@ public abstract class AbstractCache<K,V> implements Cache<K,V>{
         }
         Consumer updateConsumer = (newValue)->{
             if(timeUnit != null){
-                cache.PUT(key, (V) newValue, expireAfterWrite, timeUnit);
+                cache.PUT(key, (V) newValue, expireAfterWrite, timeUnit,false);
             }else {
-                cache.PUT(key,newValue);
+                cache.PUT(key,newValue,false);
             }
         };
         V newValue = newLoader.apply(key);
@@ -57,7 +53,7 @@ public abstract class AbstractCache<K,V> implements Cache<K,V>{
     }
 
     protected abstract CacheGetResult<V> doGET(K key);
-    protected abstract CacheResult  doPut(K key,V value,long expireAfter,TimeUnit timeUnit);
+    protected abstract CacheResult  doPut(K key,V value,long expireAfter,TimeUnit timeUnit,boolean onlyPutLocal);
 
     @Override
     public CacheGetResult<V> GET(K key) {
@@ -66,20 +62,20 @@ public abstract class AbstractCache<K,V> implements Cache<K,V>{
     }
 
     @Override
-    public CacheResult PUT(K key, V value,long expireAfterWrite,TimeUnit timeUnit) {
+    public CacheResult PUT(K key, V value,long expireAfterWrite,TimeUnit timeUnit,boolean onlyPutLocal) {
         if(key == null){
             return CacheResult.FAIL_WITHOUT_MSG;
         }
-        CacheResult result = doPut(key,value,expireAfterWrite,timeUnit);
+        CacheResult result = doPut(key,value,expireAfterWrite,timeUnit,onlyPutLocal);
         return result;
     }
 
     @Override
-    public CacheResult REMOVE(K key) {
+    public CacheResult REMOVE(K key,boolean onlyRemoveLocal) {
         if(key == null){
             return CacheResult.FAIL_ERROR_PARAM;
         }
-        return doRemove(key);
+        return doRemove(key,onlyRemoveLocal);
     }
-    protected abstract CacheResult doRemove(K key);
+    protected abstract CacheResult doRemove(K key,boolean onlyRemoveLocal);
 }

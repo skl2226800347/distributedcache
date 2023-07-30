@@ -9,18 +9,32 @@ import java.util.function.Function;
 
 public interface Cache<K,V> {
 
-    V get(K key);
-
-    default void put(K key,V value){
-        PUT(key,value);
+    default V get(K key){
+        CacheGetResult<V> result = GET(key);
+        if(result.isSuccess()){
+            return result.getValue();
+        }else{
+            return null;
+        }
     }
 
-    default CacheResult PUT(K key,V value){
+
+    default void put(K key,V value){
+        PUT(key,value,false);
+    }
+
+    default void put(K key,V value,boolean onlyPutLocal){
+        PUT(key,value,onlyPutLocal);
+    }
+
+    default CacheResult PUT(K key,V value,boolean onlyPutLocal){
         if(key == null){
             return CacheResult.FAIL_ERROR_PARAM;
         }
-        return PUT(key,value,getCacheConfig().getExpireAfterWriteInMillis(),TimeUnit.MILLISECONDS);
+        return PUT(key,value,getCacheConfig().getExpireAfterWriteInMillis(),TimeUnit.MILLISECONDS,onlyPutLocal);
     }
+
+    CacheResult PUT(K key, V value , long expireAfterWrite, TimeUnit timeUnit,boolean onlyPutLocal);
 
     CacheConfig getCacheConfig();
 
@@ -30,10 +44,13 @@ public interface Cache<K,V> {
 
     CacheGetResult<V> GET(K key);
 
-    CacheResult PUT(K key, V value , long expireAfterWrite, TimeUnit timeUnit);
 
-    default boolean remove(K key){
-        return REMOVE(key).isSuccess();
+
+    default boolean remove(K key,boolean onlyRemoveLocal){
+        return REMOVE(key,onlyRemoveLocal).isSuccess();
     }
-    CacheResult REMOVE(K key);
+    default boolean remove(K key){
+        return REMOVE(key,false).isSuccess();
+    }
+    CacheResult REMOVE(K key,boolean onlyRemoveLocal);
 }

@@ -1,5 +1,6 @@
 package com.skl.distributedcache.core.multi;
 
+import com.skl.distributedcache.anno.api.CacheConstants;
 import com.skl.distributedcache.core.AbstractCache;
 import com.skl.distributedcache.core.Cache;
 import com.skl.distributedcache.core.CacheValueHolder;
@@ -53,21 +54,25 @@ public class MultiCache<K,V> extends AbstractCache<K,V> {
         for(int i=0;i<lastIndex;i++){
             Cache cache = caches[i];
             if(timeUnit == null){
-                cache.PUT(key,value);
+                cache.PUT(key,value,false);
             }else{
-                cache.PUT(key,value,expire,timeUnit);
+                cache.PUT(key,value,expire,timeUnit,false);
             }
         }
     }
 
     @Override
-    protected CacheResult doPut(K key, V value, long expire, TimeUnit timeUnit) {
-        for(Cache cache : caches) {
+    protected CacheResult doPut(K key, V value, long expire, TimeUnit timeUnit,boolean onlyPutLocal) {
+        for(int i=0;i<caches.length;i++) {
+            if(onlyPutLocal && i>CacheConstants.ZERO){
+                break;
+            }
+            Cache cache = caches[i];
             CacheResult result;
             if(timeUnit == null) {
-                result = cache.PUT(key, value);
+                result = cache.PUT(key, value,onlyPutLocal);
             }else{
-                result = cache.PUT(key,value,expire,timeUnit);
+                result = cache.PUT(key,value,expire,timeUnit,onlyPutLocal);
             }
             if(!result.isSuccess()){
                 return result;
@@ -77,9 +82,13 @@ public class MultiCache<K,V> extends AbstractCache<K,V> {
     }
 
     @Override
-    protected CacheResult doRemove(K key) {
-        for(Cache cache : caches) {
-            CacheResult result = cache.REMOVE(key);
+    protected CacheResult doRemove(K key,boolean onlyRemoveLocal) {
+        for(int i=0;i<caches.length;i++) {
+            if(onlyRemoveLocal && i>CacheConstants.ZERO){
+                break;
+            }
+            Cache cache = caches[i];
+            CacheResult result = cache.REMOVE(key,onlyRemoveLocal);
             if(!result.isSuccess()) {
                 return result;
             }
