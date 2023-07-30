@@ -5,11 +5,13 @@ import com.skl.distributedcache.anno.support.CacheConfigMap;
 import com.skl.distributedcache.anno.support.DefaultCacheService;
 import com.skl.distributedcache.core.Cache;
 import com.skl.distributedcache.core.utils.CollectionUtil;
+import com.skl.distributedcache.core.utils.NetUtil;
 import com.skl.distributedcache.core.utils.StringUtils;
 import com.skl.distributedcache.remoting.api.Client;
 import com.skl.distributedcache.remoting.api.ClientBuilder;
 import com.skl.distributedcache.remoting.api.DataEvent;
 import com.skl.distributedcache.remoting.api.DataEventType;
+import com.skl.distributedcache.remoting.api.constants.RemotingConstants;
 import com.skl.distributedcache.remoting.api.listener.DataListener;
 import com.skl.distributedcache.remoting.api.param.RemotingParam;
 import com.skl.distributedcache.remoting.zookeeper.ZookeeperClientBuider;
@@ -26,7 +28,6 @@ import java.util.stream.Collectors;
 
 public abstract class ZookeeperRemotingAutoInit extends AbstractRemotingAutoInit {
     private static final Logger logger = LoggerFactory.getLogger(ZookeeperRemotingAutoInit.class);
-
     @Autowired
     private CacheConfigMap cacheConfigMap;
 
@@ -51,6 +52,9 @@ public abstract class ZookeeperRemotingAutoInit extends AbstractRemotingAutoInit
             }).filter(s-> s != null).collect(Collectors.toList());
             config.setSubscribePathList(subscribePathList);
         }
+        if(ct.getProperty("publishPort") != null){
+            config.setPublicPort(Integer.valueOf(ct.getProperty("publishPort")));
+        }
     }
 
     @Override
@@ -67,12 +71,16 @@ public abstract class ZookeeperRemotingAutoInit extends AbstractRemotingAutoInit
                 return ;
             }
             for (String subscribePath : zookeeperConfig.getSubscribePathList()) {
-                client.subscribe(subscribePath,getDataListener(defaultCacheService));
+                client.subscribe(subscribePath,getDataListener(zookeeperConfig,defaultCacheService));
             }
         }
     }
 
-    protected DataListener getDataListener(DefaultCacheService defaultCacheService){
+    protected DataListener getDataListener(ZookeeperConfig zookeeperConfig ,DefaultCacheService defaultCacheService){
+        StringBuilder publicHost = new StringBuilder();
+        publicHost.append(NetUtil.getIp())
+                .append(RemotingConstants.DEFAULT_SEPARAT_SYSTEM)
+                .append(zookeeperConfig.getPublicPort());
         DataListener dataListener = new DataListener() {
             @Override
             public void dataEvent(DataEvent dataEvent) {
@@ -95,6 +103,10 @@ public abstract class ZookeeperRemotingAutoInit extends AbstractRemotingAutoInit
                 if(StringUtils.isEmpty(remotingParam.getCacheName())){
                     return ;
                 }
+                if(publicHost.toString().equals(remotingParam.publicHost())){
+                    logger.info("dataEvent  publicHost:{} 过滤",publicHost);
+                    return;
+                }
                 DataEventType dataEventType = DataEventType.getInstance(remotingParam.getDataEventType());
                 if(dataEventType == null){
                     return;
@@ -114,4 +126,5 @@ public abstract class ZookeeperRemotingAutoInit extends AbstractRemotingAutoInit
         };
         return dataListener;
     }
+
 }

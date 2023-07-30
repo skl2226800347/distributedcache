@@ -28,6 +28,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient {
     private List<TreeCache> treeCacheList = new ArrayList<>();
 
     public CuratorZookeeperClient(CuratorZookeeperConfig config){
+        super(config);
         CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder();
         client = builder.retryPolicy(new RetryNTimes(1,config.getSleepMsBetweenRetries())).sessionTimeoutMs(config.getSessionTimeoutMs())
                 .connectionTimeoutMs(config.getConnectionTimeoutMs())

@@ -1,8 +1,9 @@
 package com.skl.distributedcache.remoting.zookeeper;
 
+import com.skl.distributedcache.core.utils.NetUtil;
+import com.skl.distributedcache.core.utils.StringUtils;
 import com.skl.distributedcache.remoting.api.listener.DataListener;
 import com.skl.distributedcache.remoting.api.param.RemotingParam;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,6 +11,13 @@ import java.util.concurrent.Executor;
 
 public abstract class AbstractZookeeperClient implements ZookeeperClient {
     protected List<String> subscribes = new ArrayList<>();
+    protected ZookeeperConfig zookeeperConfig;
+
+    public AbstractZookeeperClient(ZookeeperConfig zookeeperConfig){
+        Objects.requireNonNull(zookeeperConfig,"zookeeperConfig is null");
+        this.zookeeperConfig = zookeeperConfig;
+    }
+
     @Override
     public boolean isClose() {
         return false;
@@ -19,6 +27,10 @@ public abstract class AbstractZookeeperClient implements ZookeeperClient {
     public void publish(String path, RemotingParam param) {
         if(!isExists(path)){
             create(path,false);
+        }
+        if(StringUtils.isEmpty(param.getPublicIp())){
+            param.setPublicIp(NetUtil.getIp());
+            param.setPublishPort(this.zookeeperConfig.getPublicPort());
         }
         doPublish(path,param);
     }
