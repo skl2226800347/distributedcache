@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class DemoServiceImpl extends BaseService implements DemoService {
 
     @Override
-    @Cached(area = "default",name = "name",cacheType = CacheType.LOCAL,key="#id")
+    @Cached(area = "default",name = "name",cacheType = CacheType.BOTH,key="#id")
     public String get(String id) {
         return "返回结果:"+id;
     }
